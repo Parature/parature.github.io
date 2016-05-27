@@ -1,0 +1,986 @@
+﻿<!doctype html>
+<html lang="en">
+<head>
+    <title>Parature Chat XMPP Documentation</title>
+
+    <link rel="stylesheet" type="text/css" href="libs/bootstrap-3.3.4/css/bootstrap.min.css" />
+    <link rel="stylesheet" type="text/css" href="css/docs.css" />
+    <link rel="stylesheet" type="text/css" href="css/print.css" media="print" />
+</head>
+
+<body>
+    <header>
+        <img src="images/logo-parature.png" alt="Parature, Inc">
+    </header>
+
+    <nav>
+        <div id="nav-menu">
+            <ul>
+                <li><a href="https://support.parature.com/">Success Home</a></li>
+                <li><a href="https://support.parature.com/ics/support/KBSplash.asp">Knowledgebase</a></li>
+                <li><a href="https://support.parature.com/ics/support/ticketnewwizard.asp?style=classic">Submit a Ticket</a></li>
+                <li><a href="https://support.parature.com/link/portal/3/51/Article/4011/Training-Center">Training Center</a></li>
+                <li><a href="https://support.parature.com/ics/support/myhistory.asp">My History</a></li>
+                <li><a href="https://shareideas.parature.com/">Share Ideas</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div id="modified" class="container">
+        <span>updated Aug 20, 2014</span>
+    </div>
+
+    <div class="container">
+        <div class="row">
+            <div id="toc" class="col-md-3">
+                <div data-spy="affix" data-offset-top="186">
+                    <div class="list-group">
+                        <a href="#intro" class="list-group-item">Introduction</a>
+                        <a href="#xmpp" class="list-group-item">XMPP</a>
+                        <a href="#xmpphttp" class="list-group-item">XMPP Over HTTP</a>
+                        <a href="#boshpoll" class="list-group-item">BOSH vs Polling</a>
+                        <!--<a href="#notes" class="list-group-item">Notes and Considerations</a>
+                        <a href="#errors" class="list-group-item">Error Codes</a>-->
+                    </div>
+                    <div class="panel-group">
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <h4 class="panel-title">
+                                    <a class="accordion-toggle" data-toggle="collapse" href="#notify">Chat Notification</a>
+                                </h4>
+                            </div>
+                            <div id="notify" class="panel-collapse collapse">
+                                <div class="panel-body list-group">
+                                    <a href="#notify-session" class="list-group-item">1. Create a Session</a>
+                                    <a href="#notify-auth" class="list-group-item">2. Authentication</a>
+                                    <a href="#notify-notify" class="list-group-item">3. Notifications</a>
+                                    <a href="#notify-terminate" class="list-group-item">4. Termination</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel-group">
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <h4 class="panel-title">
+                                    <a class="accordion-toggle" data-toggle="collapse" href="#ingame">In-Game Chat</a>
+                                </h4>
+                            </div>
+                            <div id="ingame" class="panel-collapse collapse">
+                                <div class="panel-body list-group">
+                                    <a href="#ingame-jid" class="list-group-item">1. Fetch JID</a>
+                                    <a href="#ingame-session" class="list-group-item">2. Create a Session</a>
+                                    <a href="#ingame-auth" class="list-group-item">3. Authentication</a>
+                                    <a href="#ingame-join" class="list-group-item">4. Join Room</a>
+                                    <a href="#ingame-questions" class="list-group-item">5. Pre-Chat Questions</a>
+                                    <a href="#ingame-chatting" class="list-group-item">6. Chatting</a>
+                                    <a href="#ingame-end" class="list-group-item">7. End Chat</a>
+                                    <!--<a href="#ingame-leave" class="list-group-item">8. Leave Room</a>-->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!--
+                    <div class="panel-group">
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <h4 class="panel-title">
+                                    <a class="accordion-toggle" data-toggle="collapse" href="#codesample">Code Samples</a>
+                                </h4>
+                            </div>
+                            <div id="codesample" class="panel-collapse collapse">
+                                <div class="panel-body list-group">
+                                    <a href="#csharp" class="list-group-item">C#</a>
+                                    <a href="#java" class="list-group-item">Java</a>
+                                    <a href="#php" class="list-group-item">PHP</a>
+                                    <a href="#ruby" class="list-group-item">Ruby</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    -->
+                </div>
+            </div>
+
+            <div id="doc" class="col-md-9">
+                <div class="object">
+                    <div id="intro" class="object-section">
+                        <h2>Introduction</h2>
+                        <p>The Parature Chat system allows CSRs to chat and receive notifications for new incoming messages from within the Service Desk. This helps CSRs manage Customer issues from start to finish using the same interfae for all tools, but there are also cases where CSRs will need to use external tools, software, or platforms to chat with Customers.</p>
+                        <p>For example, when supporting subscribers for an online game, CSRs may want to allow Customers to use the game client itself to chat in order to keep immersion as much as possible. The CSR continues to use the Service Desk to access the Customer's data, while the Customer continues to play the game uninterrupted. Because the Parature Chat system is based on the XMPP standard, there are many tools available for receiving notifications outside of the Service Desk, as well as utilizing third-party tools and in-game chat as a medium for Customer chat support.</p>
+                    </div>
+                </div>
+                <div class="object">
+                    <div id="xmpp" class="object-section">
+                        <h2>XMPP</h2>
+                        <p>Parature Chat is implemented using the open standards of XMPP. At a high level, XMPP is a standard XML messaging that provides message delivery and presence information. The following references are available from the XMPP Standards Foundation:</p>
+                        <ul>
+                            <li><a href="http://xmpp.org">http://xmpp.org</a></li>
+                            <li><a href="http://xmpp.org/rfcs">http://xmpp.org/rfcs</a></li>
+                            <li><a href="http://xmpp.org/extensions">http://xmpp.org/extensions</a></li>
+                        </ul>
+                        <p>The XMPP RFCs are formal public standards; <a href="http://xmpp.org/rfcs/rfc3920.html">RFC 3920 - XMPP Core</a> and <a href="http://xmpp.org/rfcs/rfc3921.html">RFC 3921 - XMPP IM</a> pertain primarily to the process of creating and implementing a Chat Notification integration with the Prature Chat system. The other RFCs are generally not of interest with the Parature Chat system.</p>
+                        <p>The XMPP extensions are best practices in comparison to RFCs; however, in practice, the extensions are treated just as strictly as the RFC standars. The Parature Chat system honors these extensions.</p>
+                    </div>
+                    <div id="xmpphttp" class="object-section">
+                        <h3>XMPP Over HTTP</h3>
+                        <p>The Parature Chat system transports all XMPP data via HTTP. There are some details regarding the transmission of XMPP data over HTTP which the RFCs do not cover specificially, but are covered in <a href="http://xmpp.org/extensions/xep-0124.html">XEP-0124: Bidirectional-streams Over Synchronous HTP (BOSH)</a>. Any integration with Parature Chat will require using HTTP as a transport layer for all XMPP data. Traditional socket are not supported by Parature.</p>
+                    </div>
+                    <div id="boshpoll" class="object-section">
+                        <h3>BOSH vs. Polling</h3>
+                        <p>Parature Chat implements <a href="http://xmpp.org/extensions/xep-0124.html">XEP-0124</a> for delivering XMPP via HTTP, which advocates use of the BOSH technique. While BOSH and polling techniques are available under <a href="http://xmpp.org/extensions/xep-0124.html">XEP-0124</a>, Parature Chat for the Portal uses polling instead of BOSH for higher reliability. If you are using a web browser as a user interface to your customers, it is recommended to use traditional polling techniques for higher reliability and compatibility; if you are working in another technology other than javascript, BOSH is supported.</p>
+                    </div>
+                </div>
+                <!--
+                <div class="object">
+                    <div id="notes" class="object-section">
+                        <h2>Notes and Considerations</h2>
+                        <h3>Transactional Synchronicity</h3>
+                        <p>One thing to really consider here is that the documented flow of messages optimizes out any empty messages making them synchronous which rarely happens in practice. There is no guaranteed message deliver time in XMPP however in practice it is very responsive. You should expect that in each state, mode, or transaction that you might in fact receive an empty message in response which just means the server is not ready to respond to you yet. You should continue the process by transmitting empty messages until you get the response you are looking for. Failure to design your system along this principle will certainly lead to undesired behavior especially under loaded conditions.</p>
+                        <h4>Error Handling</h4>
+                        <p>This document does not cover error handling on the customer facing client side. As a general guidline once chatting is enabled just retransmitting usually works as errors rarely occur at this place. However, in the pre-chatting phases we have found the fasted recovery ot usually be creating a new session and starting over with some sanity checks to ensure looping does not occur.</p>
+                        <h4>Message Loop</h4>
+                        <p>It may not be obvious that an implied messaging loop must exist in your design. You can never stop being in contact with the server even if you have to send empty messages to stay in touch, which in fact is what happens even during the session creationg and login process. If you polling feel free to contact the server any time you need to transmit, but you should never have 2 connections going at the same time so you have to synchronize your polling loop with your transmitting loop. If you use binding, you will have always 1 connection open and a 2nd on demand for transmit.</p>
+                        <h4>Transmitting is Always Receiving</h4>
+                        <p>You should expect that ANY time you contact the server that you might receive a message back. This means if you write your code to transmit separately from your receiving logic you MUST expect to receive data on the transmit transaction. The server will send any messages pending to you on the very next connection made to the server regardless if it is your transmit or receive logic. Basically, the server does not understand transmit and receive as separate transactions. they are all one and you must code to that.</p>
+                        <h4>Multiple Messages Any Time</h4>
+                        <p>Expect to receive multiple messages at any time. The samples largely show just a single message being received at any time, but in fact the server can send any number of messages to you in a single transaction and in fact you can transmit more than one as well. We generally avoid transmitting more than one just for simplicity, but feel free to transmit multiples if you desire.</p>
+                        <h4>XML Escaping and Encoding</h4>
+                        <p>Some advice here, the XMPP protocol is very strict about XML encoding and if you do it wrong your session is terminated and is not recoverable. In development if you get the escaping wrong you will know it rather quickly but once this is done right it should translate into stable production. Make sure you test lots of obscure avlues including UTF8 characters in other languages. Also, be sure in your testing to test with characters that are highly sensitive in XML such as &gt; &lt; &amp; &quot; &rsquo; etc.</p>
+                    </div>
+                </div>
+                -->
+                <div class="object">
+                    <h2>Chat Notification Phases</h2>
+                    <p>The notification API is divided into four unique phases:</p>
+                    <ol>
+                        <li>Creating a Session</li>
+                        <li>Authentication</li>
+                        <li>Displaying Notifications</li>
+                        <li>Notification API Termination</li>
+                    </ol>
+                    <div id="notify-session" class="object-section">
+                        <h3>Create a Session</h3>
+                        <p>The XMPP protocol requires a session to be created before authenticating the user. Creating a session includes, among other things, supplying the initial sequence number (RID). The resulting session creation response will return a session ID (SID) which must be presented with all future messages. See the XMPP RFCs for specific details, the sample below creates a polling HTTP session per <a href="http://xmpp.org/extensions/xep-0124.html">XEP-0124</a>.</p>
+                        <dl class="dl-horizontal">
+                            <dt>URL Structure</dt>
+                            <dd>
+                                <code>http://{hostname}/PortalChat/Default.aspx</code>
+                            </dd>
+                            <dt>Method</dt>
+                            <dd>POST</dd>
+                            <dt>Request Body</dt>
+                            <dd>
+<pre><span class="nt">&lt;body</span>
+    <span class="na">content=</span><span class="s">"text/xml"</span>
+    <span class="na">charset=</span><span class="s">"utf-8"</span>
+    <span class="na">hold=</span><span class="s">"1"</span>
+    <span class="na">rid=</span><span class="s">"701"</span>
+    <span class="na">to=</span><span class="s">"parature.com"</span>   
+    <span class="na">route=</span><span class="s">"xmpp:jabber.org:9999"</span>
+    <span class="na">wait=</span><span class="s">"0"</span>
+    <span class="na">xml:lang=</span><span class="s">"en"</span>
+    <span class="na">secure=</span><span class="s">"true"</span>
+    <span class="na">xmlns:xmpp=</span><span class="s">"urn:xmpp:xbosh"</span>
+    <span class="na">xmlns=</span><span class="s">"http://jabber.org/protocol/httpbind"</span> <span class="nt">/&gt;</span></pre>
+                            </dd>
+                            <dt>Response</dt>
+                            <dd>
+<pre><span class="nt">&lt;body</span>
+    <span class="na">authid=</span><span class="s">"25828A8F2AF"</span>
+    <span class="na">inactivity=</span><span class="s">"60"</span>
+    <span class="na">polling=</span><span class="s">"5"</span>
+    <span class="na">requests=</span><span class="s">"2"</span>
+    <span class="na">secure=</span><span class="s">"true"</span>
+    <span class="na">sid=</span><span class="s">"25828A8F2AF"</span>
+    <span class="na">wait=</span><span class="s">"0"</span>
+    <span class="na">xmlns=</span><span class="s">"http://jabber.org/protocol/httpbind"</span>
+    <span class="na">xmlns:stream=</span><span class="s">"http://etherx.jabber.org/streams"</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;stream:features/&gt;</span>
+<span class="nt">&lt;/body&gt;</span></pre>
+                            </dd>
+                        </dl>
+                    </div>
+                    <div id="notify-auth" class="object-section">
+                        <h3>Authentication</h3>
+                        <p>After creating an XMPP session the next step is to authenticate the XMPP user using the User ID and the CSR password. The Parature Chat system implements XMPP IQ Auth authentication which consists of two transaction, first requesting the required fields, then supplying the required fields and their values. See the XMPP RFCs for specific details about authentication in XMPP.</p>
+                        <p>By XMPP standards, the purpose of requesting the required fields before authenticating is so that your client can dynamically prompt the end user for any information needed by the server to authenticate. In practice, the required values never change and, in relation to the Parature Chat system, the results of this request are ignored. It is required that you make this request, regardless, to conform to XMPP standards.</p>
+                        <h4>Fetch Required Fields</h4>
+                        <dl class="dl-horizontal">
+                            <dt>URL Structure</dt>
+                            <dd>
+                                <code>http://{hostname}/PortalChat/Default.aspx</code>
+                            </dd>
+                            <dt>Method</dt>
+                            <dd>POST</dd>
+                            <dt>
+                                Request Body
+                                <br />
+                                <span class="label label-info">example</span>
+                            </dt>
+                            <dd>
+<pre><span class="nt">&lt;body</span> <span class="na">xmlns=</span><span class="s">http://jabber.org/protocol/httpbind"</span><span class="nt">&gt;</span> <span class="na">rid=</span><span class="s">"702"</span> <span class="na">sid=</span><span class="s">25828A8F2AF"</span><span class="nt">&gt;
+    &lt;iq</span> <span class="na">type=</span><span class="s">"get"</span> <span class="na">id=</span><span class="s">"auth703"</span> <span class="na">xmlns=</span><span class="s">"jabber:client"</span><span class="nt">&gt;</span>
+        <span class="nt">&lt;query</span> <span class="na">xmlns=</span><span class="s">"jabber:iq:auth"</span><span class="nt">&gt;</span>
+            <span class="nt">&lt;username&gt;</span>
+                not_35316538663931322f6340632e636f6d2f35332f345f646576616c6961737c646576746f70303039@parature.com/supportchat
+            <span class="nt">&lt;/username&gt;</span>
+        <span class="nt"> &lt;/query&gt;</span>
+    <span class="nt">&lt;/iq&gt;
+<span class="nt">&lt;/body&gt;</span></pre>
+                            </dd>
+                            <dt>
+                                Response
+                                <br />
+                                <span class="label label-info">example</span>
+                            </dt>
+                            <dd>
+<pre><span class="nt">&lt;body</span> <span class="na">xmlns=</span><span class="s">"http://jabber.org/protocol/httpbind"</span> <span class="na">xmlns:stream=</span><span class="s">"http://etherx.jabber.org/streams"</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;iq</span>
+        <span class="na">id=</span><span class="s">"auth703"</span>
+        <span class="na">type=</span><span class="s">"result"</span>
+        <span class="na">from=</span><span class="s">"not_35316538663931322f6340632e636f6d2f35332f345f646576616c6961737c646576746f70303039@parature.com/supportchat"</span>
+        <span class="na">to=</span><span class="s">"cm-2_jsmcp-1_httpbindd-1@cm-2_jsmcp-1.parature/25828A8F2AF"</span><span class="nt">&gt;</span>
+        <span class="nt">&lt;query</span> <span class="na">xmlns=</span><span class="s">jabber:iq:auth"</span><span class="nt">&gt;</span>
+            <span class="nt">&lt;username&gt;</span>
+                not_35316538663931322f6340632e636f6d2f35332f345f646576616c6961737c646576746f70303039@parature.com/supportchat
+            <span class="nt">&lt;/username&gt;</span>
+            <span class="nt">&lt;password/&gt;</span>
+            <span class="nt">&lt;resource/&gt;</span>
+        <span class="nt">&lt;/query&gt;</span>
+    <span class="nt">&lt;/iq&gt;</span>
+<span class="nt">&lt;/body&gt;</span></pre>
+                            </dd>
+                        </dl>
+                        <p>Notice that the response to the query requests the username, password, and resource for authentication. It is a critical requirement to use <code>supportchat</code> for the resource.</p>
+                        <h4>Authenticate</h4>
+                        <dl class="dl-horizontal">
+                            <dt>URL Structure</dt>
+                            <dd>
+                                <code>http://{hostname}/PortalChat/Default.aspx</code>
+                            </dd>
+                            <dt>Method</dt>
+                            <dd>POST</dd>
+                            <dt>
+                                Request Body
+                                <br />
+                                <span class="label label-info">example</span>
+                            </dt>
+                            <dd>
+<pre><span class="nt">&lt;body</span> <span class="na">xmlns=</span><span class="s">"http://jabber.org/protocol/httpbind"</span> <span class="na">rid=</span><span class="s">"703"</span> <span class="na">sid=</span><span class="s">"25828A8F2AF"</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;iq</span> <span class="na">type=</span><span class="s">"set"</span> <span class="na">id=</span><span class="s">"auth704"</span><span class="nt">&gt;</span>
+        <span class="nt">&lt;query</span> <span class="na">xmlns=</span><span class="s">"jabber:iq:auth"</span><span class="nt">&gt;</span>
+            <span class="nt">&lt;username&gt;</span>
+                not_35316538663931322f6340632e636f6d2f35332f342f646576616c6961737c646576746f70303039
+            <span class="nt">&lt;/username&gt;</span>
+            <span class="nt">&lt;password&gt;</span>anonymous<span class="nt">&lt;/password&gt;</span>
+            <span class="nt">&lt;resource&gt;</span>supportchat<span class="nt">&lt;/resource&gt;</span>
+        <span class="nt">&lt;/query&gt;</span>
+    <span class="nt">&lt;/iq&gt;</span>
+<span class="nt">&lt;/body&gt;</span></pre>
+                            </dd>
+                            <dt>
+                                Response
+                                <br />
+                                <span class="label label-info">example</span>
+                            </dt>
+                            <dd>
+<pre><span class="nt">&lt;body</span> <span class="na">xmlns=</span><span class="s">"http://jabber.org/protocol/httpbind"</span> <span class="na">xmlns:stream=</span><span class="s">"http://etherx.jabber.org/streams"</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;iq</span>
+        <span class="na">id=</span><span class="s">"auth704"</span>"
+        <span class="na">type=</span><span class="s">"result"</span>
+        <span class="na">from=</span><span class="s">"not_35316538663931322f6340632e636f6d2f35332f342f646576616c6961737c646576746f70303039@parature.com/supportchat"</span>
+        <span class="na">to=</span><span class="s">"cm-2_jsmcp-1_httpbindd-1@cm-2_jsmcp-1.parature/25828A8F2AF/auth"</span><span class="nt">&gt;</span>
+        <span class="nt">&lt;query</span> <span class="na">xmlns=</span><span class="s">"jabber:iq:auth"</span><span class="nt">/&gt;</span>
+    <span class="nt">&lt;/iq&gt;</span>
+<span class="nt">&lt;/body&gt;</span></pre>
+                            </dd>
+                        </dl>
+                        <p>The final response is an empty IQ response. It is recommended to be familiar with XMPP error responses and to create a recovery schema for errors. This document does not describe responses from the server nor how to recover from them. For details on error messages and conditions refer to the RFCs.</p>
+                    </div>
+                    <div id="notify-notify" class="object-section">
+                        <h3>Displaying Notifications</h3>
+                        <p>After the notification API is authenticated, the integration will operate as a standard XMPP client and continue to contact the server with empty messages. The notification API is not capable of sending normal chat messages so this should be prohibited by design of the third party software. When a notification is displayed on the service desk to the a CSR, the notification API will also receive the same notification data as a normal chat message to the notification software. Only the body of the message should be displayed, not who it is from or to whom it is addressed.</p>
+                        <dl class="dl-horizontal">
+                            <dt>URL Structure</dt>
+                            <dd>
+                                <code>http://{hostname}/PortalChat/Default.aspx</code>
+                            </dd>
+                            <dt>Method</dt>
+                            <dd>POST</dd>
+                            <dt>
+                                Request Body
+                                <br />
+                                <span class="label label-info">example</span>
+                            </dt>
+                            <dd>
+<pre><span class="nt">&lt;body</span> <span class="na">xmlns=</span><span class="s">"http://jabber.org/protocol/httpbind"</span> <span class="na">rid=</span><span class="s">"707"</span> <span class="na">sid=</span><span class="s">"25828A8F2AF"</span> <span class="nt">/&gt;</span></pre>
+                            </dd>
+                            <dt>
+                                Response
+                                <br />
+                                <span class="label label-info">example</span>
+                            </dt>
+                            <dd>
+<pre><span class="nt">&lt;body</span> <span class="na">xmlns=</span><span class="s">"http://jabber.org/protocol/httpbind"</span> <span class="na">xmlns:stream=</span><span class="s">"http://etherx.jabber.org/streams"</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;message</span>
+        <span class="na">from=</span><span class="s">"csr_85329cc6829e0076a4dfdfc6cd3315dc425619e4715d80bac4d604bcf71203ec@parature.com/2d2672d3-0b99-4816-b6b8-3028dc2888b2"</span>
+        <span class="na">to=</span><span class="s">"not_32666330356237392f6340632e636f6d2f35332f342f646576616c6961737c646576746f70303039@parature.com/supportchat"</span>
+        <span class="na">id=</span><span class="s">"__ts_633887030387450090"</span><span class="nt">&gt;</span>
+            <span class="nt">&lt;body&gt;</span>
+                New Chat from Customer Jason
+            <span class="nt">&lt;/body&gt;</span>
+    <span class="nt">&lt;/message&gt;</span>
+<span class="nt">&lt;/body&gt;</span></pre>
+                            </dd>
+                        </dl>
+                        <p>After receiving this message, no response is required but the notification software should display this message to the user. This process will repeat as new chat notifications are sent.</p>
+                    </div>
+                    <div id="notify-terminate" class="object-section">
+                        <h3>Notification API Termination</h3>
+                        <p>The notification API integration should terminate the XMPP connection per the XMPP RFC standards. The integration will be logged out within 30 seconds automatically if the termination is not received.</p>
+                        <dl class="dl-horizontal">
+                            <dt>URL Structure</dt>
+                            <dd>
+                                <code>http://{hostname}/PortalChat/Default.aspx</code>
+                            </dd>
+                            <dt>Method</dt>
+                            <dd>POST</dd>
+                            <dt>
+                                Request Body
+                                <br />
+                                <span class="label label-info">example</span>
+                            </dt>
+                            <dd>
+<pre><span class="nt">&lt;body</span> <span class="na">xmlns=</span><span class="s">"http://jabber.org/protocol/httpbind"</span> <span class="na">rid=</span><span class="s">"708"</span> <span class="na">sid=</span><span class="s">"25828A8F2AF"</span> <span class="na">type=</span><span class="s">"terminate"</span> <span class="nt">/&gt;</span></pre>
+                            </dd>
+                            <dt>Response</dt>
+                            <dd>
+                                <em>None</em>
+                            </dd>
+                        </dl>
+                    </div>
+                </div>
+                <div class="object">
+                    <h2>In-Game Chat</h2>
+                    <p>
+                        The customer chat experience can be divided into seven unique phases:
+                        <ol>
+                            <li>Fetching your JID</li>
+                            <li>Creating a Session</li>
+                            <li>Authentication</li>
+                            <li>Room Joining</li>
+                            <li>Pre-chat Questions</li>
+                            <li>Chatting</li>
+                            <li>End Chat</li>
+                            <!--<li>room departing</li>-->
+                        </ol>
+                    </p>
+                    <div id="ingame-jid" class="object-section">
+                        <h3>Fetch JID</h3>
+                        <p>Your JID is your XMPP User ID, not to be mistaken for your Parature User ID. Each chat session is given a unique XMPP JID, so for each new chat session you must request a new XMPP JID to be used.</p>
+                        <dl class="dl-horizontal">
+                            <dt>URL Structure</dt>
+                            <dd>
+                                <code>{http or https}://{hostname}/ics/support/chat/retrievejid.asp?deptID={department id}&userID={user id}</code>
+                            </dd>
+                            <dt>Method</dt>
+                            <dd>GET</dd>
+                            <dt>Request Body</dt>
+                            <dd>
+                                <em>None</em>
+                            </dd>
+                            <dt>Response</dt>
+                            <dd>
+                                Encoded XMPP JID
+                            </dd>
+                            <dt>Notes</dt>
+                            <dd>
+                                <ul>
+                                    <li>The Parature User ID must be URL encoded when included in the URL.</li>
+                                    <li>Trim any white space from the response.</li>
+                                </ul>
+                            </dd>
+                        </dl>
+
+                    </div>
+                    <div id="ingame-session" class="object-section">
+                        <h3>Create a Session</h3>
+                        <p>The XMPP protocol requires a session to be created before authenticating the user. Creating a session includes, among other things, supplying the initial sequence number (RID). The resulting session creation response will return a session ID (SID) which must be presented with all future messages. See the XMPP RFCs for specific details, the sample below creates a polling HTTP session per <a href="http://xmpp.org/extensions/xep-0124.html">XEP-0124</a>.</p>
+                        <dl class="dl-horizontal">
+                            <dt>URL Structure</dt>
+                            <dd>
+                                <code>{http or https}://{hostname}/PortalChat</code>
+                            </dd>
+                            <dt>Method</dt>
+                            <dd>POST</dd>
+                            <dt>
+                                Request Body
+                                <br />
+                                <span class="label label-info">example</span>
+                            </dt>
+                            <dd>
+<pre><span class="nt">&lt;body</span>
+    <span class="na">xmlns=</span><span class="s">"http://jabber.org/protocol/httpbind"</span>
+    <span class="na">content=</span><span class="s">"text/xml"</span>
+    <span class="na">charset=</span><span class="s">"utf8"</span>
+    <span class="na">rid=</span><span class="s">"125"</span>
+    <span class="na">hold=</span><span class="s">"1"</span>
+    <span class="na">route=</span><span class="s">"xmpp:jabber.org:9999"</span>
+    <span class="na">secure=</span><span class="s">"true"</span>
+    <span class="na">wait=</span><span class="s">"0"</span>
+    <span class="na">xml:lang=</span><span class="s">"en"</span><!--
+    <span class="na">xmlns:xmpp=</span><span class="s">"urn:xmpp:xbosh"</span>-->
+    <span class="na">to=</span><span class="s">"parature.com"</span> <span class="nt">/&gt;</span></pre>
+                            </dd>
+                            <dt>
+                                Response
+                                <br />
+                                <span class="label label-info">example</span>
+                            </dt>
+                            <dd>
+<pre><span class="nt">&lt;body</span>
+    <span class="na">authid=</span><span class="s">"35AA5F314"</span>
+    <span class="na">inactivity=</span><span class="s">"60"</span>
+    <span class="na">polling=</span><span class="s">"5"</span>
+    <span class="na">requests=</span><span class="s">"2"</span>
+    <span class="na">secure=</span><span class="s">"true"</span>
+    <span class="na">sid=</span><span class="s">"35AA5F314"</span>
+    <span class="na">wait=</span><span class="s">"0"</span>
+    <span class="na">xmlns=</span><span class="s">"http://jabber.org/protocol/httpbind"</span>
+    <span class="na">xmlns:stream=</span><span class="s">"http://etherx.jabber.org/streams"</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;stream:features/&gt;</span>
+<span class="nt">&lt;/body&gt;</span></pre>
+                            </dd>
+                        </dl>
+                    </div>
+                    <div id="ingame-auth" class="object-section">
+                        <h3>Authentication</h3>
+                        <p>After creating an XMPP session the next step is to authenticate the XMPP user using the User ID and the CSR password. The Parature Chat system implements XMPP IQ Auth authentication which consists of two transaction, first requesting the required fields, then supplying the required fields and their values. See the XMPP RFCs for specific details about authentication in XMPP.</p>
+                        <p>By XMPP standards, the purpose of requesting the required fields before authenticating is so so that your client can dynamically prompt the end user for any information needed by the server to authenticate. In practice, the required values never change and, in relation to the Parature Chat system, the results of this request are ignored. It is required that you make this request, regardless, to conform to XMPP standards.</p>
+                        <h4>Fetch Required Fields</h4>
+                        <dl class="dl-horizontal">
+                            <dt>URL Structure</dt>
+                            <dd>
+                                <code>{http or https}://{hostname}/PortalChat</code>
+                            </dd>
+                            <dt>Method</dt>
+                            <dd>POST</dd>
+                            <dt>
+                                Request Body
+                                <br />
+                                <span class="label label-info">example</span>
+                            </dt>
+                            <dd>
+<pre><span class="nt">&lt;body</span> <span class="na">xmlns=</span><span class="s">"http://jabber.org/protocol/httpbind"</span> <span class="na">rid=</span><span class="s">"126"</span> <span class="na">sid=</span><span class="s">"35AA5F314"</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;iq</span> <span class="na">type=</span><span class="s">"get"</span> <span class="na">id=</span><span class="s">"auth127"</span> <span class="na">xmlns=</span><span class="s">"jabber:client"</span><span class="nt">&gt;
+        &lt;query</span> <span class="na">xmlns=</span><span class="s">"jabber:iq:auth"</span><span class="nt">&gt;
+            &lt;username&gt;</span>cst_35316538663931322f6340632e636f6d2f35332f342f646576616c6961737c646576746f70303039@parature.com/supportchat<span class="nt">&lt;/username&gt;
+        &lt;/query&gt;
+    &lt;/iq&gt;
+&lt;/body&gt;</span></pre>
+                            </dd>
+                            <dt>
+                                Response
+                                <br />
+                                <span class="label label-info">example</span>
+                            </dt>
+                            <dd>
+<pre><span class="nt">&lt;body</span> <span class="na">xmlns=</span><span class="s">"http://jabber.org/protocol/httpbind"</span> <span class="na">xmlns:stream</span><span class="s">"http://etherx.jabber.org/streams"</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;iq</span> <span class="na">id=</span><span class="s">"auth127"</span> <span class="na">type=</span><span class="s">"result"</span> <span class="na">from=</span><span class="s">"cst_35316538663931322f6340632e636f6d2f35332f342f646576616c6961737c646576746f70303039@parature.com/supportchat"</span> <span class="na">to=</span><span class="s">"cm-2_jsmcp-1_httpbindd-1@cm-2_jsmcp-1.parature/25828A8F2AF"</span><span class="nt">&gt;</span>
+        <span class="nt">&lt;query</span> <span class="na">xmlns=</span><span class="s">"jabber:iq:auth"</span><span class="nt">&gt;</span>
+            <span class="nt">&lt;username&gt;</span>cst_35316538663931322f6340632e636f6d2f35332f342f646576616c6961737c646576746f70303039@parature.com/supportchat<span class="nt">&lt;/username&gt;</span>
+            <span class="nt">&lt;password/&gt;</span>
+            <span class="nt">&lt;resource/&gt;</span>
+        <span class="nt">&lt;/query&gt;</span>
+    <span class="nt">&lt;/iq&gt;</span>
+<span class="nt">&lt;/body&gt;</span></pre>
+                            </dd>
+                        </dl>
+                        <h4>Authenticate</h4>
+                        <dl class="dl-horizontal">
+                            <dt>URL Structure</dt>
+                            <dd>
+                                <code>{http or https}://{hostname}/PortalChat</code>
+                            </dd>
+                            <dt>Method</dt>
+                            <dd>POST</dd>
+                            <dt>
+                                Request Body
+                                <br />
+                                <span class="label label-info">example</span>
+                            </dt>
+                            <dd>
+<pre><span class="nt">&lt;body</span> <span class="na">xmlns=</span><span class="s">"http://jabber.org/protocol/httpbind"</span> <span class="na">rid=</span><span class="s">"128"</span><span class="nt"> <span class="na">sid=</span><span class="s">"35AA5F314"</span>&gt;</span>
+    <span class="nt">&lt;iq</span> <span class="na">type=</span><span class="s">"set"</span> <span class="na">id=</span><span class="s">"auth129"</span>&gt;
+        &lt;query</span> <span class="na">xmlns=</span><span class="s">"jabber:iq:auth"</span><span class="nt">&gt;
+            &lt;username&gt;</span>cst_35316538663931322f6340632e636f6d2f35332f342f646576616c6961737c646576746f70303039<span class="nt">&lt;/username&gt;
+            &lt;password&gt;</span>anonymous<span class="nt">&lt;/password&gt;
+            &lt;resource&gt;</span>supportchat<span class="nt">&lt;/resource&gt;
+        &lt;/query&gt;
+    &lt;/iq&gt;
+&lt;/body&gt;</span></pre>
+                            </dd>
+                            <dt>
+                                Response
+                                <br />
+                                <span class="label label-info">example</span>
+                            </dt>
+                            <dd>
+<pre><span class="nt">&lt;body</span> <span class="na">xmlns=</span><span class="s">"http://jabber.org/protocol/httpbind"</span> <span class="na">xmlns:stream=</span><span class="s">"http://etherx.jabber.org/streams"</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;iq</span> <span class="na">id=</span><span class="s">"auth129"</span> <span class="na">type=</span><span class="s">"result"</span> <span class="na">from=</span><span class="s">"cst_35316538663931322f6340632e636f6d2f35332f342f646576616c6961737c646576746f70303039@parature.com/supportchat"</span> <span class="na">to=</span><span class="s">"cm-2_jsmcp-1_httpbindd-1@cm-2_jsmcp-1.parature/25828A8F2AF/auth"</span><span class="nt">&gt;</span>
+        <span class="nt">&lt;query</span> <span class="na">xmlns=</span><span class="s">"jabber:iq:auth"</span> <span class="nt">/&gt;</span>
+    <span class="nt">&lt;/iq&gt;</span>
+<span class="nt">&lt;/iq&gt;</span></pre>
+                            </dd>
+                        </dl>
+                    </div>
+                    <div id="ingame-join" class="object-section">
+                        <h3>Room Joining</h3>
+                        <!--<p>Up to this point, all transactions have been preemptively and sequentially performed as described. From this point forward, the client switches form preemptive methods to reactive methods where it will no longer send messages (other than chat message to a CSR) until it receives a message from the server.</p>-->
+                        <p>Parature Chat conducts Customer chats inside of private chat rooms. The Customer is instructed to join the private as a requirement by the chatroom operator. This transaction still takes place within the XMPP protocol, but is done by an inline message sent directly to the Customer by the Parature Chat service.</p>
+                        <h4>Join Room Invite</h4>
+                        <dl class="dl-horizontal">
+                            <dt>URL Structure</dt>
+                            <dd>
+                                <code>{http or https}://{hostname}/PortalChat</code>
+                            </dd>
+                            <dt>Method</dt>
+                            <dd>POST</dd>
+                            <dt>
+                                Request Body
+                                <br />
+                                <span class="label label-info">example</span>
+                            </dt>
+                            <dd>
+<pre><span class="nt">&lt;body</span> <span class="na">xmlns=</span><span class="s">"http://jabber.org/protocol/httpbind"</span> <span class="na">rid=</span><span class="s">"129"</span> <span class="na">sid=</span><span class="s">"25828A8F2AF"</span><span class="nt">/&gt;</pre>
+                            </dd>
+                            <dt>
+                                Response
+                                <br />
+                                <span class="label label-info">example</span>
+                            </dt>
+                            <dd>
+<pre><span class="nt">&lt;body</span> <span class="na">xmlns=</span><span class="s">"http://jabber.org/protocol/httpbind"</span> <span class="na">xmlns:stream=</span><span class="s">"http://etherx.jabber.org/streams"</span><span class="nt">&gt;
+    &lt;message</span> <span class="na">from=</span><span class="s">"opr_85329cc6829e0076a4dfdfc6cd3315dc425619e4715d80bac4d604bcf71203ec@parature.com/2d2672d3-0b99-4816-b6b8-3028dc2888b2"</span> <span class="na">id=</span><span class="s">"__ts_633886890392006234"</span> <span class="na">to=</span><span class="s">"cst_35316538663931322f6340632e636f6d2f35332f342f646576616c6961737c646576746f70303039@parature.com/supportchat"</span><span class="nt">&gt;
+        &lt;body&gt;</span>
+            {
+                "chatRoomJID":"pri_0ac76a382ac998ce20de16570c9830583485117c7ae8125fb7773fb27ddda8c0b31c5f7ffa8c6ebcd41046606b2d88ee@queue.parature.com",
+                "messageType":"CustomerGoToRoom"
+            }
+    <span class="nt">&lt;/body&gt;
+    &lt;/message&gt;
+&lt;/body&gt;</span></pre>
+                            </dd>
+                        </dl>
+                        <h4>Join Room</h4>
+                        <dl class="dl-horizontal">
+                            <dt>URL Structure</dt>
+                            <dd>
+                                <code>{http or https}://{hostname}/PortalChat</code>
+                            </dd>
+                            <dt>Method</dt>
+                            <dd>POST</dd>
+                            <dt>
+                                Request Body
+                                <br />
+                                <span class="label label-info">example</span>
+                            </dt>
+                            <dd>
+<pre><span class="nt">&lt;body</span> <span class="na">xmlns=</span><span class="s">"http://jabber.org/protocol/httpbind"</span> <span class="na">rid=</span><span class="s">"130"</span> <span class="na">sid=</span><span class="s">"35AA5F314"</span><span class="nt">&gt;
+    &lt;presence</span> <span class="na">from=</span><span class="s">"cst_35316538663931322f6340632e636f6d2f35332f342f646576616c6961737c646576746f70303039@parature.com/supportchat"</span> <span class="na">to=</span><span class="s">"pri_0ac76a382ac998ce20de16570c9830583485117c7ae8125fb7773fb27ddda8c0b31c5f7ffa8c6ebcd41046606b2d88ee@queue.parature.com/cst_35316538663931322f6340632e636f6d2f35332f342f646576616c6961737c646576746f70303039@parature.com/supportchat"</span> <span class="na">type=</span><span class="s">"available"</span><span class="nt">&gt;
+        &lt;x</span> <span class="na">xmlns=</span><span class="s">"http://jabber.org/protocol/muc"</span> <span class="nt">/&gt;
+    &lt;/presence&gt;
+&lt;/body&gt;</span></pre>
+                            </dd>
+                            <dt>
+                                Response
+                                <br />
+                                <span class="label label-info">example</span>
+                            </dt>
+                            <dd>
+<pre><span class="nt">&lt;body</span> <span class="na">xmlns=</span><span class="s">"http://jabber.org/protocol/httpbind"</span> <span class="na">xmlns:stream=</span><span class="s">"http://etherx.jabber.org/streams"</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;presence</span> <span class="na">from=</span><span class="s">"pri_0ac76a382ac998ce20de16570c9830583485117c7ae8125fb7773fb27ddda8c0b31c5f7ffa8c6ebcd41046606b2d88ee@queue.parature.com/cst_35316538663931322f6340632e636f6d2f35332f342f646576616c6961737c646576746f70303039@parature.com/supportchat"</span> <span class="na">to=</span><span class="s">"cst_35316538663931322f6340632e636f6d2f35332f342f646576616c6961737c646576746f70303039@parature.com/supportchat"</span><span class="nt">&gt;</span>
+        <span class="nt">&lt;x</span> <span class="na">xmlns=</span><span class="s">"http://jabber.org/protocol/muc#user"</span><span class="nt">&gt;</span>
+            <span class="nt">&lt;item</span> <span class="na">affiliation=</span><span class="s">"none"</span> <span class="na">role=</span><span class="s">"participant"</span> <span class="nt">/&gt;</span>
+        <span class="nt">&lt;/x&gt;</span>
+    <span class="nt">&lt;/presence&gt;</span>
+<span class="nt">&lt;/body&gt;</span></pre>
+                            </dd>
+                        </dl>
+                        <p>At this point, the Customer has joined their private chat room and will receive additional messages containing further instructions.</p>
+                    </div>
+                    <div id="ingame-questions" class="object-section">
+                        <h3>Pre-Chat Questions (Optional)</h3>
+                        <p>Pre-Chat Questions can be used to ask your Customers questions before the chat process begins. The answers to these questions can be used to direct Customers to specific chat support resources to improve their support experience. Pre-Chat Questions must be enabled in your chat configuration in the Parature service desk and you must have configured Pre-Chat Questions to be asked. If you have no Pre-Chat Questions or they are not enabled, you will not see these messages in your in-game chat. You can skip the support of these questions if you are certain you will not use Pre-Chat Questions.</p>
+                        <p>Pre-chat questions strictly follow the XEP-0004 specification for forms over XMPP. The standard allows for asking multiple questions in a single message to be displayed as a form, but the Parature chat system will only ask the questions one at a time. This is because you can create Pre-chat Questions with dependencies on the answers to other questions. Because of this, it is necessary to send the questions one at a time so the next question can take these factors into account. Further, the Parature Pre-Chat Question system supports more UI level controls than the XMPP standard allows (such as radio fields). To accommodate this while preserving adherence to the standard a special attribute to the XML has been added which spells out an extended UI mode if you chose to follow it. The reference design implements the core XEP-0004 UI types, not the extended Parature types.</p>
+                        <dl class="dl-horizontal">
+                            <dt>URL Structure</dt>
+                            <dd>
+                                <code>{http or https}://{hostname}/PortalChat</code>
+                            </dd>
+                            <dt>Method</dt>
+                            <dd>POST</dd>
+                            <dt>
+                                Request Body
+                                <br />
+                                <span class="label label-info">example</span>
+                            </dt>
+                            <dd>
+<pre><span class="nt">&lt;body</span> <span class="na">xmlns=</span><span class="s">"http://jabber.org/protocol/httpbind"</span> <span class="na">rid=</span><span class="s">"131"</span> <span class="na">sid=</span><span class="s">"35AA5F314"</span> <span class="nt">/&gt;</span></pre>
+                            </dd>
+                            <dt>
+                                Response
+                                <br />
+                                <span class="label label-info">example</span>
+                            </dt>
+                            <dd>
+<pre><span class="nt">&lt;body</span> <span class="na">xmlns=</span><span class="s">"http://jabber.org/protocol/httpbind"</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;message</span> <span class="na">from=</span><span class="s">"opr_85329cc6829e0076a4dfdfc6cd3315dc425619e4715d80bac4d604bcf71203ec@parature.com/ba26003f-8cb8-436a-a6ee-fb23c6cd4552"</span> <span class="na">to=</span><span class="s">"cst_35316538663931322f6340632e636f6d2f35332f342f646576616c6961737c646576746f70303039@parature.com/supportchat"</span> <span class="na">id=</span><span class="s">"__ts_633891273126794973"</span><span class="nt">&gt;</span>
+        <span class="nt">&lt;body/&gt;</span>
+        <span class="nt">&lt;x</span> <span class="na">type=</span><span class="s">"jabber:x:data"</span><span class="nt">&gt;</span>
+            <span class="nt">&lt;title&gt;</span>Start<span class="nt">&lt;/title&gt;</span>
+            <span class="nt">&lt;instructions&gt;</span>What can we help you with today?<span class="nt">&lt;/instructions&gt;</span>
+            <span class="nt">&lt;field</span> <span class="na">exttype=</span><span class="s">"TEXT"</span> <span class="na">label=</span><span class="s">""</span> <span class="na">type=</span><span class="s">"text-single"</span> <span class="na">var=</span><span class="s">"116"</span><span class="nt">&gt;</span>
+                <span class="nt">&lt;desc/&gt;</span>
+                <span class="nt">&lt;required&gt;</span>true<span class="nt">&lt;/required&gt;</span>
+                <span class="nt">&lt;value/&gt;</span>
+            <span class="nt">&lt;/field&gt;</span>
+        <span class="nt">&lt;/x&gt;</span>
+    <span class="nt">&lt;/message&gt;</span>
+<span class="nt">&lt;/body&gt;</span></pre>
+                            </dd>
+                        </dl>
+                        <p>Here is the response to that question after the customer has completed the form, you will see another question as the response to the answer.</p>
+                        <dl class="dl-horizontal">
+                            <dt>URL Structure</dt>
+                            <dd>
+                                <code>{http or https}://{hostname}/PortalChat</code>
+                            </dd>
+                            <dt>Method</dt>
+                            <dd>POST</dd>
+                            <dt>
+                                Request Body
+                                <br />
+                                <span class="label label-info">example</span>
+                            </dt>
+                            <dd>
+<pre><span class="nt">&lt;body</span> <span class="na">xmlns=</span><span class="s">"http://jabber.org/protocol/httpbind"</span> <span class="na">rid=</span><span class="s">"134"</span> <span class="na">sid=</span><span class="s">"35AA5F314"</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;message</span> <span class="na">xmlns=</span><span class="s">"jabber:client"</span> <span class="na">from=</span><span class="s">"cst_35316538663931322f6340632e636f6d2f35332f342f646576616c6961737c646576746f70303039@parature.com/supportchat"</span> <span class="na">to=</span><span class="s">"opr_85329cc6829e0076a4dfdfc6cd3315dc425619e4715d80bac4d604bcf71203ec@parature.com"</span> <span class="nt">&gt;</span>
+        <span class="nt">&lt;x</span> <span class="na">xmlns=</span><span class="s">"jabber:x:data"</span> <span class="na">type=</span><span class="s">"submit"</span><span class="nt">&gt;</span>
+            <span class="nt">&lt;field</span> <span class="na">type=</span><span class="s">"text-single"</span> <span class="na">var=</span><span class="s">"116"</span><span class="nt">&gt;</span>
+                <span class="nt">&lt;value&gt;</span>Nothing in particular<span class="nt">&lt;/value&gt;</span>
+            <span class="nt">&lt;/field&gt;</span>
+        <span class="nt">&lt;/x&gt;</span>
+    <span class="nt">&lt;/message&gt;</span>
+<span class="nt">&lt;/body&gt;</span></pre>
+                            </dd>
+                            <dt>
+                                Response
+                                <br />
+                                <span class="label label-info">example</span>
+                            </dt>
+                            <dd>
+<pre><span class="nt">&lt;body</span> <span class="na">xmlns=</span><span class="s">"http://jabber.org/protocol/httpbind"</span> <span class="na">xmlns:stream=</span><span class="s">"http://etherx.jabber.org/streams"</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;message</span> <span class="na">from=</span><span class="s">"opr_85329cc6829e0076a4dfdfc6cd3315dc425619e4715d80bac4d604bcf71203ec@parature.com/ba26003f-8cb8-436a-a6ee-fb23c6cd4552"</span> <span class="na">to=</span><span class="s">"cst_35316538663931322f6340632e636f6d2f35332f342f646576616c6961737c646576746f70303039@parature.com/supportchat"</span> <span class="na">id=</span><span class="s">"__ts_633891273249408653"</span><span class="nt">&gt;</span>
+        <span class="nt">&lt;body/&gt;</span>
+        <span class="nt">&lt;x</span> <span class="na">type=</span><span class="s">"form"</span> <span class="na">xmlns=</span><span class="s">"jabber:x:data"</span><span class="nt">&gt;</span>
+            <span class="nt">&lt;title&gt;</span>Recurring<span class="nt">&lt;/title&gt;</span>
+            <span class="nt">&lt;instructions&gt;</span>Is this a recurring problem?<span class="nt">&lt;/instructions&gt;</span>
+            <span class="nt">&lt;field</span> <span class="na">exttype=</span><span class="s">CHECKBOX</span> <span class="na">label=</span><span class="s">"Recurring"</span> <span class="na">type-</span><span class="s">"boolean"</span> <span class="na">var=</span> <span class="s">"117"</span><span class="nt">&gt;</span>
+                <span class="nt">&lt;desc/&gt;</span>
+                <span class="nt">&lt;required&gt;</span>true<span class="nt">&lt;/required&gt;</span>
+                <span class="nt">&lt;value/&gt;</span>
+            <span class="nt">&lt;/field&gt;</span>
+        <span class="nt">&lt;/x&gt;</span>
+    <span class="nt">&lt;/message&gt;</span>
+<span class="nt">&lt;/body&gt;</span></pre>
+                            </dd>
+                        </dl>
+                        <h4>Extensions to XEP-0004</h4>
+                        <p>The XEP-0004 protocol has been extended to include some enhancements. These extensions are backwards compatible and a strict implmenetation of XEP-0004 will still work well. The extensions provied for better form question types such as radio buttons, they provide the ability to perform client side validation, and also the ability to skip questions which are not required.</p>
+                        <h5>Parature Field Types</h5>
+                        <p>The XEP-0004 forms protocol has been extedned to include an extended field type. This extended field type can be safely ignored if you do not want to use extended field types such as radio groups, check boxes, etc. The basic XEP-0004 forms protocol allows for drop-downs and free text type fields. Below is a detail of the extended Parature field types which can be found in the <code>exttype</code> attribute of the forms message:</p>
+                        <dl class="dl-horizontal">
+                            <dt>CHECKBOX</dt>
+                            <dd>A check box should be displayed for each field option but only one can be selected at a time.</dd>
+                            <dt>CHECKBOXMULTIPLE</dt>
+                            <dd>A check box should be displayed for each field option and multiple can be selected.</dd>
+                            <dt>EMAIL</dt>
+                            <dd>An input field which accepts valid email addresses should be displayed to the user.</dd>
+                            <dt>DROPDOWN</dt>
+                            <dd>A single selection drop-down should be created for the field options.</dd>
+                            <dt>DROPDOWNMULTIPLE</dt>
+                            <dd>A multiple selection drop-down should be created for the field options.</dd>
+                            <dt>INT</dt>
+                            <dd>A field which only accepts integers should be displayed to the user.</dd>
+                            <dt>INTERNATIONALPHONE</dt>
+                            <dd>A field which accepts integers and dashes allowing the user to enter non-US phone numbers should be presented.</dd>
+                            <dt>PASSWORD</dt>
+                            <dd>A free text field should be displayed that obscures the text typed by the user with asterisks or some other character.</dd>
+                            <dt>RADIO</dt>
+                            <dd>A radio field which only allows a single selection should be created for the field options.</dd>
+                            <dt>TEXT</dt>
+                            <dd>A single line free text area should be displayed allowing the user to type alphanumeric characters except a carriage return.</dd>
+                            <dt>TEXTAREA</dt>
+                            <dd>A multi-line free text area should be displayed allowing the user to type alphanumeric characters including a carriage return.</dd>
+                            <dt>URL</dt>
+                            <dd>An input field which accepts valid URLs should be displayed to the user.</dd>
+                            <dt>USDATE</dt>
+                            <dd>A date picking system should be displayed to the user.</dd>
+                            <dt>USPHONE</dt>
+                            <dd>A field which accepts phone numbers formatted as a United States phone number should be presented to the user.</dd>
+                        </dl>
+                        <h5>Form Validation</h5>
+                        <p>XEP-0004 does not provide any mechanism for validation of user supplied form values. For drop-downs, check boxes, radio buttons, etc. validation should not be necessary. For free text fields with special purposes, such as email, url, etc. validation can be an issue. The Parature Chat system will not accept a malformed answer for those field types and if one is presented, it will ask the same question again. A regular expression is passed that can be used for validation on the client side if you chose to use it. It is recommend to use this expression, as it improves the performance of the Chat system by giving the customer instant feedback for bad answers. You will find the regular expression in the extended XML attribute named <code>extregex</code>. It is only present on questions which have a field type that needs validation.</p>
+                        <h5>Skipping Questions</h5>
+                        <p>The field section of a Pre-Chat Question has a tag named <code>required</code>. If this tags value is <code>false</code>, you can submit the question as <code>skipped</code>. The Parature chat system will consider this question skipped and move to the next question. Not all questions can be skipped and this can be configured per question on your chat setup pages in the Parature service desk.</p>
+                        <p>If the question has been skipped, the attribute <code>extskip</code> must be added to the field tag response with the value <code>true</code>. The value is optional and does not need to be supplied as false for questions that were not skipped.</p>
+                        <dl class="dl-horizontal">
+                            <dt>URL Structure</dt>
+                            <dd>
+                                <code>{http or https}://{hostname}/PortalChat</code>
+                            </dd>
+                            <dt>Method</dt>
+                            <dd>POST</dd>
+                            <dt>
+                                Request Body
+                                <br />
+                                <span class="label label-info">example</span>
+                            </dt>
+                            <dd>
+<pre><span class="nt">&lt;body</span> <span class="na">xmlns=</span><span class="s">"http://jabber.org/protocol/httpbind"</span> <span class="na">rid=</span><span class="s">"134"</span> <span class="na">sid=</span><span class="s">"35AA5F314"</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;message</span> <span class="na">xmlns=</span><span class="s">"jabber:client"</span> <span class="na">from=</span><span class="s">"cst_35316538663931322f6340632e636f6d2f35332f342f646576616c6961737c646576746f70303039@parature.com/supportchat"</span> <span class="na">to=</span><span class="s">"opr_85329cc6829e0076a4dfdfc6cd3315dc425619e4715d80bac4d604bcf71203ec@parature.com"</span><span class="nt">&gt;</span>
+        <span class="nt">&lt;x</span> <span class="na">xmlns=</span><span class="s">"jabber:x:data"</span> <span class="na">type=</span><span class="s">"submit"</span><span class="nt">&gt;</span>
+            <span class="nt">&lt;field</span> <span class="na">type=</span><span class="s">"text-single"</span> <span class="na">var=</span><span class="s">"116"</span> <span class="na">extskip=</span><span class="s">"true"</span><span class="nt">/&gt;</span>
+        <span class="nt">&lt;/x&gt;</span>
+    <span class="nt">&lt;/message&gt;</span>
+<span class="nt">&lt;/body&gt;</span></pre>
+                            </dd>
+                            <!--<dt>Response</dt>
+                            <dd></dd>-->
+                        </dl>
+                    </div>
+                    <div id="ingame-chatting" class="object-section">
+                        <h3>Chatting</h3>
+                        <p>After joining the private room or after answering optional Pre-Chat Questions the Customer Chat client will receive another JSON encoded chat message instructing the client that it is authorized to chat. The Customer Chat client should prohibit the Customer from typing chat messages until this message is received. Failure to prohibit the client from sending messages before this message could results in lost messages and strange behavior while Pre-Chat Questions are being asked.</p>
+                        <dl class="dl-horizontal">
+                            <dt>URL Structure</dt>
+                            <dd>
+                                <code>{http or https}://{hostname}/PortalChat</code>
+                            </dd>
+                            <dt>Method</dt>
+                            <dd>POST</dd>
+                            <dt>
+                                Request Body
+                                <br />
+                                <span class="label label-info">example</span>
+                            </dt>
+                            <dd>
+<pre><span class="nt">&lt;body</span> <span class="na">xmlns=</span><span class="s">"http://jabber.org/protocol/httpbind"</span> <span class="na">rid=</span> <span class="s">"136"</span><span class="na">sid=</span><span class="s">"35AA5F314"</span><span class="nt">/&gt;</span></pre>
+                            </dd>
+                            <dt>
+                                Response
+                                <br />
+                                <span class="label label-info">example</span>
+                            </dt>
+                            <dd>
+<pre><span class="nt">&lt;body</span> <span class="na">xmlns=</span><span class="s">"http://jabber.org/protocol/httpbind"</span> <span class="na">xmlns:stream=</span><span class="s">"http://etherx.jabber.org/streams"</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;message</span> <span class="na">from=</span><span class="s">"opr_85329cc6829e0076a4dfdfc6cd3315dc425619e4715d80bac4d604bcf71203ec@parature.com/2d2672d3-0b99-4816-b6b8-3028dc2888b2"</span> <span class="na">to=</span><span class="s">"cst_32666330356237392f6340632e636f6d2f35332f342f646576616c6961737c646576746f70303039@parature.com/supportchat"</span> <span class="na">id=</span><span class="s">"__ts_633887030387450090"</span><span class="nt">&gt;</span>
+        <span class="nt">&lt;body&gt;</span>
+            {
+                "messageType":"CustomerOKToChat"
+            }
+        <span class="nt">&lt;/body&gt;</span>
+    <span class="nt">&lt;/message&gt;</span>
+<span class="nt">&lt;/body&gt;</span></pre>
+                            </dd>
+                        </dl>
+                        <p>After receiving this message, no response is required but the Customer Chat client should now release the Customer to type messages to the private chat room.</p>
+                        <p>At this stage of the chat process, the Customer and any CSRs can asynchronously send chat messages to the room at any time. Any message sent to the room will be sent to all parties in the room, including messages being echoed back to the original sender. Because of this, it is not necessary to display messages sent by the Customer to their screen, you can simply wait for the message to be sent back to you from the room and displayed just like any normal message from a CSR.</p>
+                        <h4>Customer Sends Message</h4>
+                        <dl class="dl-horizontal">
+                            <dt>URL Structure</dt>
+                            <dd>
+                                <code>{http or https}://{hostname}/PortalChat</code>
+                            </dd>
+                            <dt>Method</dt>
+                            <dd>POST</dd>
+                            <dt>
+                                Request Body
+                                <br />
+                                <span class="label label-info">example</span>
+                            </dt>
+                            <dd>
+<pre><span class="nt">&lt;body</span> <span class="na">xmlns=</span><span class="s">"http://jabber.org/protocol/httpbind"</span> <span class="na">rid=</span><span class="s">"138"</span> <span class="na">sid=</span><span class="s">"35AA5F314"</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;message</span> <span class="na">from=</span><span class="s">"cst_33633133656533622f6340632e636f6d2f35332f342f646576616c6961737c646576746f70303039@parature.com/supportchat"</span> <span class="na">to=</span><span class="s">"pri_a76b3fae5828e821bba433554b2bda7663137cca856a159fc772574383502eb7ce76d5963817c7421a2e4883e9d689a1@queue.parature.com"</span> <span class="na">id=</span><span class="s">"c4b288fd-be82-4265-8f9f-24bef01eb435"</span> <span class="na">xmlns=</span><span class="s">"jabber:client"</span> <span class="na">type=</span><span class="s">"chat"</span><span class="nt">&gt;</span>
+        <span class="nt">&lt;body&gt;</span>
+            Hello there I need help.
+        <span class="nt">&lt;/body&gt;</span>
+        <span class="nt">&lt;x</span> <span class="na">xmlns=</span><span class="s">"parature:xmpp"</span><span class="nt">&gt;</span>
+            <span class="nt">&lt;displayname&gt;</span>The Dude<span class="na">&lt;/displayname&gt;</span>
+        <span class="nt">&lt;/x&gt;</span>
+    <span class="nt">&lt;/message&gt;</span>
+<span class="nt">&lt;/body&gt;</span></pre>
+                            </dd>
+                            <dt>
+                                Response
+                                <br />
+                                <span class="label label-info">example</span>
+                            </dt>
+                            <dd>
+<pre><span class="nt">&lt;body</span> <span class="na">xmlns=</span><span class="s">"http://jabber.org/protocol/httpbind"</span> <span class="na">xmlns:stream=</span><span class="s">"http://etherx.jabber.org/streams"</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;message</span> <span class="na">from=</span><span class="s">"pri_a76b3fae5828e821bba433554b2bda7663137cca856a159fc772574383502eb7ce76d5963817c7421a2e4883e9d689a1@queue.parature.com/cst_33633133656533622f6340632e636f6d2f35332f342f646576616c6961737c646576746f70303039@parature.com/supportchat"</span> <span class="na">to=</span><span class="s">"cst_33633133656533622f6340632e636f6d2f35332f342f646576616c6961737c646576746f70303039@parature.com/supportchat"</span> <span class="na">id=</span><span class="s">"c4b288fd-be82-4265-8f9f-24bef01eb435"</span> <span class="na">type=</span><span class="s">"chat"</span><span class="nt">&gt;</span>
+        <span class="nt">&lt;body</span> <span class="na">xmlns=</span><span class="s">"jabber:component:accept"</span><span class="nt">&gt;</span>
+            Hello there I need help.
+        <span class="nt">&lt;/body&gt;</span>
+        <span class="nt">&lt;x</span> <span class="na">xmlns=</span><span class="s">"parature:xmpp"</span><span class="nt">&gt;</span>
+            <span class="nt">&lt;diplayname&gt;</span>The Dude<span class="nt">&lt;/displayname&gt;</span>
+        <span class="nt">&lt;/x&gt;</span>
+    <span class="nt">&lt;/message&gt;</span>
+<span class="nt">&lt;/body&gt;</span></pre>
+                            </dd>
+                        </dl>
+                        <p>This is the first time you see the usage of the <code>x</code> tag with the namespace <code>parature:xmpp</code>, and specifically with the child <code>displayname</code>. The <code>x</code> tag is used for extensino of the XMPP protocol and, in this case, a display name attribute has been added to be passed along with chat messages. This is because the XMPP JIDs for both the Customers and the CSRs are not display friendly. Each chat message sent from a CSR will have this display name value and it is recommend you substitute this name in place of the XMPP JID. You should also send a display name along with each chat message sent by the Customer.</p>
+                        <dl class="dl-horizontal">
+                            <dt>URL Structure</dt>
+                            <dd>
+                                <code>{http or https}://{hostname}/PortalChat</code>
+                            </dd>
+                            <dt>Method</dt>
+                            <dd>POST</dd>
+                            <dt>
+                                Request Body
+                                <br />
+                                <span class="label label-info">example</span>
+                            </dt>
+                            <dd>
+<pre><span class="nt">&lt;body</span> <span class="na">xmlns=</span><span class="s">"http://jabber.org/protocol/httpbind"</span> <span class="na">rid=</span><span class="s">"142"</span> <span class="na">sid=</span><span class="s">"35AA5F314"</span><span class="nt">/&gt;</span></pre>
+                            </dd>
+                            <dt>
+                                Response
+                                <br />
+                                <span class="label label-info">example</span>
+                            </dt>
+                            <dd>
+<pre><span class="nt">&lt;body</span> <span class="na">xmlns=</span><span class="s">"http://jabber.org/protocol/httpbind"</span> <span class="na">xmlns:stream=</span><span class="s">"http://etherx.jabber.org/streams"</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;message</span> <span class="na">from=</span><span class="s">"pri_a76b3fae5828e821bba433554b2bda7663137cca856a159fc772574383502eb7ce76d5963817c7421a2e4883e9d689a1@queue.parature.com/csr_b210dcd57dcb532ae2b67d37fc0d18de1f58a94b0067dc47e0f7587904d8f5976d77103277bcbde7c8e163451963b586"</span> <span class="na">to=</span><span class="s">"cst_33633133656533622f6340632e636f6d2f35332f342f646576616c6961737c646576746f70303039@parature.com/supportchat"</span> <span class="na">id=</span><span class="s">"mucMessage9c967052-9717-9fe2-8854-a1d96b2b810b"</span> <span class="na">type=</span><span class="s">"groupchat"</span><span class="nt">&gt;</span>
+        <span class="nt">&lt;body</span> <span class="na">xmlns=</span><span class="nt">"jabber:component:accept"</span><span class="nt">&gt;</span>
+            Consider yourself helped!
+        <span class="nt">&lt;/body&gt;</span>
+        <span class="nt">&lt;html</span> <span class="na">xmlns=</span><span class="s">"http://jabber.org/protocol/xhtml-im"</span><span class="nt">&gt;</span>
+            <span class="nt">&lt;body</span> <span class="na">xmlns=</span><span class="s">"http://www.w3.org/1999/xhtml"</span>
+                Consider yourself helped!<span class="nt">&lt;br /&gt;</span>
+            <span class="nt">&lt;/body&gt;</span>
+        <span class="nt">&lt;/html&gt;</span>
+        <span class="nt">&lt;x</span> <span class="na">xmlns=</span><span class="s">"parature:xmpp"</span><span class="nt">&gt;</span>
+            <span class="nt">&lt;displayname&gt;</span>Test User<span class="nt">&lt;/displayname&gt;</span>
+        <span class="nt">&lt;/x&gt;</span>
+    <span class="nt">&lt;/message&gt;</span>
+<span class="nt">&lt;/body&gt;</span></pre>
+                            </dd>
+                        </dl>
+                        <p>The display name sent along with the CSR message should be used, not the XMPP JID. Additionally you will see that CSR messages contain the optional XHTML rendered message as well as the plain text message. This is implemented per the XMPP RFCs and if you are using an HTML document to display messages to the customer, it is recommend to use the HTML payload to get rich content.</p>
+                        <p>Sending XHTML from the customer is acceptable by the XMPP RFCs but the Service Desk will ignore it for security reasons.</p>
+                        <p>This process can repeat any number of times in any order, which should account for the majority of the Customer's chat experience.</p>
+                    </div>
+                    <div id="ingame-end" class="object-section">
+                        <h3>Ending Chat</h3>
+                        <p>At any point after the <strong>Customer OK to Chat</strong> message is received, the chat can be terminated by either party (Customer or CSR). When the Customer cancels, there is an opportunity to cancel, but when the CSR terminates, the chat is definitively terminated. It is possible for the Customer to abort the chat by simply losing communications, however to provide a solid end chat experience including transcripts, it is not advised.</p>
+                        <p>In the case of a CSR terminating the chat, a message with a deflection tag will be sent to the customer. If the Customer receives this deflection message, the Customer Chat client should not allow the Customer to cancel the end chat dialog back to the chat, the Customer must answer and terminate.</p>
+                        <h4>Chat Terminated by CSR</h4>
+                        <dl class="dl-horizontal">
+                            <dt>URL Structure</dt>
+                            <dd>
+                                <code>http://{hostname}/PortalChat</code>
+                            </dd>
+                            <dt>Method</dt>
+                            <dd>POST</dd>
+                            <dt>
+                                Request Body
+                                <br />
+                                <span class="label label-info">example</span>
+                            </dt>
+                            <dd>
+<pre><span class="nt">&lt;body</span> <span class="na">xmlns=</span><span class="s">"http://jabber.org/protocol/httpbind"</span> <span class="na">rid=</span><span class="s">"143"</span> <span class="na">sid=</span><span class="s">"35AA5F314"</span><span class="nt">/&gt;</span></pre>
+                            </dd>
+                            <dt>
+                                Response
+                                <br />
+                                <span class="label label-info">example</span>
+                            </dt>
+                            <dd>
+<pre><span class="nt">&lt;body</span> <span class="na">xmlns=</span><span class="s">"http://jabber.org/protocol/httpbind"</span> <span class="na">xmlns:stream=</span><span class="s">"http://etherx.jabber.org/streams"</span><span class="nt">&lt;</span>
+    <span class="nt">&lt;message</span> <span class="na">from=</span><span class="s">"opr_85329cc6829e0076a4dfdfc6cd3315dc425619e4715d80bac4d604bcf71203ec@parature.com/2d2672d3-0b99-4816-b6b8-3028dc2888b2"</span> <span class="na">to=</span><span class="s">"cst_33633133656533622f6340632e636f6d2f35332f342f646576616c6961737c646576746f70303039@parature.com/supportchat"</span> <span class="na">id=</span><span class="s">"__ts_633887075498620228"</span><span class="nt">&gt;</span>
+        <span class="nt">&lt;body&gt;</span>
+            Chat has ended
+        <span class="nt">&lt;/body&gt;</span>
+        <span class="nt">&lt;x</span> <span class="na">type=</span><span class="s">"deflection"</span> <span class="na">xmlns=</span><span class="s">"parature:xmpp:system"</span> <span class="nt">/&gt;</span>
+    <span class="nt">&lt;/message&gt;</span>
+<span class="nt">&lt;/body&gt;</span></pre>
+                            </dd>
+                        </dl>
+                        <p>Upon receiving a message with an Xtension tag whose type is <strong>deflection</strong>, the Customer client should consider the chat terminated and allow no further chat messages to be sent to the chat room. The Customer client should, however, continue with the transaction detailed below to prompt the Customer about being emailed a transcript of their chat.</p>
+                        <p>Either by the customer ending the chat, or the CSR ending the chat via deflection, the Customer client should then send a message to a special XMPP JID stating the client is ending the chat. When the chat system receives this message, it will respond to the Customer client with a XEP-0004 forms question asking the Customer if they want the chat transcript sent to them. This allows the same infrastructure which supports Pre-Chat Questions to also support the post chat experience, simplifying the implementation. For more details on XEP-0004 forms see the section above for Pre-Chat Questions.</p>
+                        <h4>End Chat Message</h4>
+                        <dl class="dl-horizontal">
+                            <dt>URL Structure</dt>
+                            <dd>
+                                <code>{http or https}://{hostname}/PortalChat</code>
+                            </dd>
+                            <dt>Method</dt>
+                            <dd>
+                                POST
+                            </dd>
+                            <dt>
+                                Request Body
+                                <br />
+                                <span class="label label-info">example</span>
+                            </dt>
+                            <dd>
+<pre><span class="nt">&lt;body</span> <span class="na">xmlns=</span><span class="s">"http://jabber.org/protocol/httpbind"</span> <span class="na">rid=</span><span class="s">"145"</span> <span class="na">sid=</span><span class="s">"35AA5F314"</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;message</span> <span class="na">xmlns=</span><span class="s">"jabber:client"</span> <span class="na">from=</span><span class="s">"cst_35316538663931322f6340632e636f6d2f35332f342f646576616c6961737c646576746f70303039@parature.com/supportchat"</span> <span class="na">to=</span><span class="s">"opr_85329cc6829e0076a4dfdfc6cd3315dc425619e4715d80bac4d604bcf71203ec@parature.com/ba26003f-8cb8-436a-a6ee-fb23c6cd455"</span> <span class="na">type=</span><span class="s">"chat"</span> <span class="na">id=</span><span class="s">"endchatmessage"</span><span class="nt">&gt;</span>
+        <span class="nt">&lt;body&gt;</span>
+            {
+                "messageType":"CustomerEndedChat",
+                "JID":"pri_3c17b12724147b989ec54676e3b0e18579ea0611411c7d591b96e6358b37ef98c438375a40f17482069ca0ecf2beaf76@queue.parature.com"
+            }
+        <span class="nt">&lt;/body&gt;</span>
+        <span class="nt">&lt;x</span> <span class="na">xmlns=</span><span class="s">"parature:xmpp"</span><span class="nt">&gt;</span>
+            <span class="nt">&lt;displayname&gt;</span>The Due<span class="nt">&lt/displayname&gt;</span>
+        <span class="nt">&lt;/x&gt;</span>
+    <span class="nt">&lt;/message&gt;</span>
+<span class="nt">&lt;/body&gt;</span></pre>
+                            </dd>
+                            <dt>
+                                Response
+                                <br />
+                                <span class="label label-info">example</span>
+                            </dt>
+                            <dd>
+<pre><span class="nt">&lt;body</span> <span class="na">xmlns=</span><span class="s">"http://jabber.org/protocol/httpbind"</span> <span class="na">xmlns:stream=</span><span class="s">"http://etherx.jabber.org/streams"</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;message</span> <span class="na">from=</span><span class="s">"opr_85329cc6829e0076a4dfdfc6cd3315dc425619e4715d80bac4d604bcf71203ec@parature.com/2d2672d3-0b99-4816-b6b8-3028dc2888b2"</span> <span class="na">to=</span><span class="s">"cst_33633133656533622f6340632e636f6d2f35332f342f646576616c6961737c646576746f70303039@parature.com/supportchat"</span> <span class="na">id=</span><span class="s">"__ts_633887075573645188"</span><span class="nt">&gt;</span>
+        <span class="nt">&lt;body/&gt;</span>
+        <span class="nt">&lt;x</span> <span class="na">type=</span><span class="s">"form"</span> <span class="na">xmlns=</span><span class="s">"jabber:x:data"</span><span class="nt">&gt;</span>
+            <span class="nt">&lt;title&gt;</span>Thank you for choosing chat support.<span class="nt">&lt;/title&gt;</span>
+            <span class="nt">&lt;instructions&gt;</span>If you would like to receive a transcript via email, select the option below<span class="nt">&lt;/instructions&gt;</span>
+            <span class="nt">&lt;field</span> <span class="na">exttype=</span><span class="s">"CHECKBOX"</span> <span class="na">label=</span><span class="s">"Send transcript to: c@c.com"</span> <span class="na">type=</span><span class="na">type=</span><span class="s">"boolean"</span> <span class="na">var=</span><span class="s">"PostChatField"</span><span class="nt">&gt;</span>
+                <span class="nt">&lt;desc/&gt;</span>
+                <span class="nt">&lt;value&gt;</span>0<span class="nt">&lt;/value&gt;</span>
+            <span class="nt">&lt;/field&gt;</span>
+        <span class="nt">&lt;/x&gt;</span>
+    <span class="nt">&lt;/message&gt;</span>
+<span class="nt">&lt;/body&gt;</span></pre>
+                            </dd>
+                        </dl>
+                    </div>
+                    <!--<div id="ingame-leave" class="object-section"></div>-->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="libs/jquery/jquery-2.1.3.min.js"></script>
+    <script src="libs/bootstrap-3.3.4/js/bootstrap.min.js"></script>
+</body>
+</html>
