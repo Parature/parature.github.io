@@ -14,7 +14,7 @@
         </header>
        
         <div id="modified" class="container">
-            <span>updated Sep 21, 2015</span>
+            <span>updated June 21, 2016</span>
         </div>
 
         <div class="container">
@@ -40,6 +40,7 @@
                                         <a href="#schema" class="list-group-item">Schema Changes</a>
                                         <a href="#relativedates" class="list-group-item">Relative Date Queries</a>
                                         <a href="#maintenance" class="list-group-item">Integrations and Parature Maintenance Windows</a>
+										<a href="#duplicates" class="list-group-item">Avoiding Duplicates</a>
                                     </div>
                                 </div>
                             </div>
@@ -528,6 +529,17 @@
                             <h3>Integrations and Parature Maintenance Windows</h3>
                             <p>The Parature system is periodically taken offline for maintenance procedures. During these procedures, you should stop your integration from running. If you cannot stop it, e.g. it is embedded inside a larger site or application, you'll need to make sure the integration recognizes and reacts to maintenance windows. When the Parature system is offline for maintenance, all API class will be returned with a 502 HTTP code. See <a href="#">API XML Return Codes</a> for a list of all return codes.</p>
                         </div>
+						<div id="duplicates" class="object-section">
+							<h3>Avoiding Duplicates with CRUD Operations for Unique Objects</h3>
+							<p>The Account and Customer entities are special in that they can represent unique objects. For example, in any given Parature system, Accounts are unique based on their Account Name and Customers are unique based on the email address or username of the customer depending on the configuration of the Parature system.</p>
+
+							<p>The API will prevent duplicates from being created for these entities except under very rare circumstances. It is possible for duplicates to be created in scenarios where the API receives a request to create an object before a previous request has been processed and inserted the object into the database. The timing for this to occur is variable, but requires requests to be received within the same second.</p> 
+
+							<p>To avoid accidentally creating duplicates when creating multiple Accounts or Customers, it is recommended to synchronously create these records. Any integration/application calling the Create or Update operations should wait until it receives a response back from the API before proceeding to process another record.</p>
+
+							<p>Any asynchronous process that creates these records runs the risk of creating duplicates unless there is a process that prevents duplicate requests from being sent to the API.</p>
+
+						</div>
                     </div>
                     <div class="object">
                         <div class="object-section">
